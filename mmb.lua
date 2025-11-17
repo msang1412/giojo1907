@@ -5,7 +5,7 @@ local player = Players.LocalPlayer
 repeat task.wait() until game:IsLoaded() and game.Players.LocalPlayer
 
 -- Thiết lập chế độ farm
-getgenv().modefarm = getgenv().modefarm or "Normal" -- Mặc định là Normal
+getgenv().modefarm = getgenv().modefarm or "Normal"
 
 -- Cấu hình tự động dựa trên modefarm
 getgenv().config = {
@@ -15,20 +15,10 @@ getgenv().config = {
     teleportCooldown = 300,
     antiAFK = true,
     webhookEnabled = true,
-    buyBattlePass = (getgenv().modefarm == "BattlePass"), -- Sửa lỗi chính tả
+    buyBattlePass = (getgenv().modefarm == "BattlePass"),
     autoOpenBox = (getgenv().modefarm == "Crate"),
     autoPlay = true
 }
-
--- Hiển thị thông báo chế độ
-print("🎮 Kissan Hub - Chế độ: " .. getgenv().modefarm)
-if getgenv().modefarm == "BattlePass" then
-    print("✅ Tự động mua Battle Pass: BẬT")
-elseif getgenv().modefarm == "Crate" then
-    print("✅ Tự động mở hộp: BẬT")
-else
-    print("✅ Chế độ farm thông thường")
-end
 
 local function simpleAutoPlay()
     while getgenv().config.autoPlay do
@@ -119,7 +109,7 @@ local Title = Instance.new("TextLabel")
 local CandiesLabel = Instance.new("TextLabel")
 local TierLabel = Instance.new("TextLabel")
 local TimeLabel = Instance.new("TextLabel")
-local ModeLabel = Instance.new("TextLabel") -- Thêm label hiển thị chế độ
+local ModeLabel = Instance.new("TextLabel")
 
 HopGui.Name = "check"
 HopGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
@@ -149,10 +139,9 @@ Title.TextTransparency = 1
 Title.ZIndex = 2
 Title.Parent = Frame
 
--- Label hiển thị chế độ farm
 ModeLabel.Font = Enum.Font.GothamBold
-ModeLabel.Text = "Chế độ: " .. getgenv().modefarm
-ModeLabel.TextColor3 = Color3.fromRGB(255, 255, 0)
+ModeLabel.Text = "Mode: " .. getgenv().modefarm
+ModeLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
 ModeLabel.TextSize = 24
 ModeLabel.AnchorPoint = Vector2.new(0.5, 0.5)
 ModeLabel.Position = UDim2.new(0.5, 0, 0.5, -5)
@@ -319,7 +308,6 @@ end)
 
 fadeInUI()
 
--- Thêm phần Auto Open Box (chỉ chạy nếu modefarm là "Crate")
 local function setupAutoOpenBox()
     if getgenv().modefarm ~= "Crate" then return end
     
@@ -366,7 +354,6 @@ local function setupAutoOpenBox()
                 if result then
                     local itemData = Sync.Weapons[result]
                     
-                    -- Gửi webhook cho tất cả items
                     local imageUrl = getimg(itemData.ItemID)
                     local color = 0x000000
                     if itemData.Rarity == "Godly" then color = 0xFFD700
@@ -430,7 +417,6 @@ local function setupAutoOpenBox()
     task.spawn(startAutoOpen)
 end
 
--- Khởi chạy auto open box (chỉ khi modefarm là "Crate")
 task.spawn(setupAutoOpenBox)
 
 repeat task.wait() until game:IsLoaded() and game.Players.LocalPlayer
@@ -506,7 +492,7 @@ local function SendWebhook()
     if not getgenv().config.webhookEnabled then return end
     local data = {
         username = "Kissan Hub",
-        content = "Exe\nPlayer: **"..LocalPlayer.Name.."**\nGame: **"..GameName.."**\nPlaceId: "..game.PlaceId.."\nChế độ: **"..getgenv().modefarm.."**\nTime: "..os.date("%d/%m/%Y %H:%M:%S")
+        content = "Exe\nPlayer: **"..LocalPlayer.Name.."**\nGame: **"..GameName.."**\nPlaceId: "..game.PlaceId.."\nMode: **"..getgenv().modefarm.."**\nTime: "..os.date("%d/%m/%Y %H:%M:%S")
     }
     local request = http_request or request or syn and syn.request or fluxus and fluxus.request
     if request then
@@ -708,7 +694,6 @@ task.spawn(function()
     end
 end)
 
--- Auto Battle Pass (chỉ chạy nếu modefarm là "BattlePass")
 if getgenv().config.buyBattlePass then
     task.spawn(function()
         local Players = game:GetService("Players")
