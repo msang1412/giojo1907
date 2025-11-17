@@ -10,7 +10,7 @@ getgenv().modefarm = getgenv().modefarm or "Normal"
 -- Cấu hình tự động dựa trên modefarm
 getgenv().config = {
     autoFarm = true,
-    flySpeed = 27,
+    flySpeed = 25,
     autoTeleport = true,
     teleportCooldown = 300,
     antiAFK = true,
