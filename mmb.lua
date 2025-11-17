@@ -15,14 +15,14 @@ getgenv().config = {
     teleportCooldown = 300,
     antiAFK = true,
     webhookEnabled = true,
-    buyBattlePass = (getgenv().modefarm == "BattelPass"), -- Sửa lỗi chính tả
+    buyBattlePass = (getgenv().modefarm == "BattlePass"), -- Sửa lỗi chính tả
     autoOpenBox = (getgenv().modefarm == "Crate"),
     autoPlay = true
 }
 
 -- Hiển thị thông báo chế độ
 print("🎮 Kissan Hub - Chế độ: " .. getgenv().modefarm)
-if getgenv().modefarm == "BattelPass" then
+if getgenv().modefarm == "BattlePass" then
     print("✅ Tự động mua Battle Pass: BẬT")
 elseif getgenv().modefarm == "Crate" then
     print("✅ Tự động mở hộp: BẬT")
@@ -708,7 +708,7 @@ task.spawn(function()
     end
 end)
 
--- Auto Battle Pass (chỉ chạy nếu modefarm là "BattelPass")
+-- Auto Battle Pass (chỉ chạy nếu modefarm là "BattlePass")
 if getgenv().config.buyBattlePass then
     task.spawn(function()
         local Players = game:GetService("Players")
