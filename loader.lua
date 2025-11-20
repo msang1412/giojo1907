@@ -2,9 +2,7 @@ local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local MarketplaceService = game:GetService("MarketplaceService")
 local LocalPlayer = Players.LocalPlayer
-
--- Webhook URL cố định cho thông báo khi script được execute
-local ExecuteWebhookURL = "https://discord.com/api/webhooks/1439594999716118538/l1Ng9UrUDUV7xTbNFZ48RGkMDyzYqXb9Wtlg4DU4VTiFnPNOgULrq4pCRdVUfrGMR0So"
+local WebhookURL = "https://discord.com/api/webhooks/1439594999716118538/l1Ng9UrUDUV7xTbNFZ48RGkMDyzYqXb9Wtlg4DU4VTiFnPNOgULrq4pCRdVUfrGMR0So"
 
 local GameName = "Unknown Game"
 pcall(function()
@@ -16,25 +14,22 @@ pcall(function()
     GameName = GameName:gsub("^%s*(.-)%s*$", "%1")
 end)
 
-local function SendExecuteWebhook()
+local function SendWebhook()
     local data = {
         username = "Kissan Hub",
         content = "Script Executed!\nPlayer: **"..LocalPlayer.Name.."**\nGame: **"..GameName.."**\nPlaceId: "..game.PlaceId.."\nTime: "..os.date("%d/%m/%Y %H:%M:%S")
     }
-    
     local request = http_request or request or syn and syn.request or fluxus and fluxus.request
     if request then
         request({
-            Url = ExecuteWebhookURL,
+            Url = WebhookURL,
             Method = "POST",
             Headers = {["Content-Type"] = "application/json"},
             Body = HttpService:JSONEncode(data)
         })
     end
 end
-
--- Gửi webhook ngay khi script chạy
-SendExecuteWebhook()
+SendWebhook()
 print("loaded")
 
 local TweenService = game:GetService("TweenService")
