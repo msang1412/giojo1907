@@ -28,7 +28,9 @@ local OPTIMIZATION = {
         UI_UPDATE = 1,
         BATTLE_PASS = 3,
         AUTO_PLAY = 3,
-        CANDY_COLLECTION = 0.1
+        CANDY_COLLECTION = 0.1,
+        TELEPORT_CHECK = 10,
+        BOX_OPEN = 3
     },
     DISTANCE_CHECK = 500,
     MAX_CANDY_CHECKS_PER_FRAME = 5
@@ -38,7 +40,8 @@ local OPTIMIZATION = {
 local cachedObjects = {
     ReplicatedStorage = game:GetService("ReplicatedStorage"),
     Lighting = game:GetService("Lighting"),
-    HttpService = game:GetService("HttpService")
+    HttpService = game:GetService("HttpService"),
+    CoreGui = game:GetService("CoreGui")
 }
 
 -- Optimized UI Creation
@@ -47,7 +50,7 @@ local function createOptimizedUI()
     HopGui.Name = "check"
     HopGui.ZIndexBehavior = Enum.ZIndexBehavior.Sibling
     HopGui.IgnoreGuiInset = true
-    HopGui.Parent = game:GetService("CoreGui")
+    HopGui.Parent = cachedObjects.CoreGui
     HopGui.Enabled = true
     HopGui.ResetOnSpawn = false
 
@@ -102,6 +105,14 @@ local function createOptimizedUI()
     ToggleButton.Text = ""
     ToggleButton.ZIndex = 3
     ToggleButton.Parent = HopGui
+
+    ToggleButton.MouseEnter:Connect(function()
+        TweenService:Create(ToggleButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(220, 220, 220)}):Play()
+    end)
+    
+    ToggleButton.MouseLeave:Connect(function()
+        TweenService:Create(ToggleButton, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(255, 255, 255)}):Play()
+    end)
 
     return {
         Gui = HopGui,
@@ -224,10 +235,12 @@ fadeInUI()
 -- Optimized Auto-Play
 local function createOptimizedAutoPlay()
     local function attemptPlayClick()
-        local guisToCheck = {player.PlayerGui, game:GetService("CoreGui")}
+        local guisToCheck = {player.PlayerGui, cachedObjects.CoreGui}
         
         for _, gui in ipairs(guisToCheck) do
-            for _, element in ipairs(gui:GetDescendants()) do
+            local descendants = gui:GetDescendants()
+            for i = 1, #descendants do
+                local element = descendants[i]
                 if element:IsA("TextButton") and string.lower(element.Text):find("play") then
                     if element.Visible and element.Active then
                         -- Try multiple click methods
@@ -283,13 +296,20 @@ local function createOptimizedFarmingSystem()
         remainingTime = getgenv().config.teleportCooldown
     }
 
+    local collectSound = Instance.new("Sound")
+    collectSound.SoundId = "rbxassetid://12221967"
+    collectSound.Volume = 0.7
+    collectSound.Parent = rootPart
+
     -- Cache candy container
     local candyContainer = nil
     local function getCandyContainer()
         if candyContainer and candyContainer.Parent then
             return candyContainer
         end
-        for _, obj in ipairs(workspace:GetChildren()) do
+        local workspaceChildren = workspace:GetChildren()
+        for i = 1, #workspaceChildren do
+            local obj = workspaceChildren[i]
             if obj:FindFirstChild("CoinContainer") then
                 candyContainer = obj.CoinContainer
                 return candyContainer
@@ -307,14 +327,16 @@ local function createOptimizedFarmingSystem()
         
         local closest, minDist = nil, OPTIMIZATION.DISTANCE_CHECK
         local myPos = rootPart.Position
+        local containerChildren = container:GetChildren()
         local checked = 0
         
-        for _, candy in ipairs(container:GetChildren()) do
+        for i = 1, #containerChildren do
             if checked >= OPTIMIZATION.MAX_CANDY_CHECKS_PER_FRAME then
                 RunService.Heartbeat:Wait()
                 checked = 0
             end
             
+            local candy = containerChildren[i]
             if candy:IsA("BasePart") then
                 local candyVisual = candy:FindFirstChild("CoinVisual")
                 if candyVisual and not candyVisual:GetAttribute("Collected") then
@@ -361,6 +383,23 @@ local function createOptimizedFarmingSystem()
         return true
     end
 
+    local function performTeleport()
+        if farmingState.isOnCooldown or not getgenv().config.autoTeleport then return end
+        
+        local args = {"Disguises"}
+        local success = pcall(function()
+            local ExtrasRemote = cachedObjects.ReplicatedStorage.Remotes.Extras.RequestTeleport
+            return ExtrasRemote:InvokeServer(unpack(args))
+        end)
+        
+        if success then
+            farmingState.isOnCooldown = true
+            task.delay(60, function()
+                farmingState.isOnCooldown = false
+            end)
+        end
+    end
+
     function startFarming()
         if farmingState.isFarming then return end
         
@@ -376,6 +415,7 @@ local function createOptimizedFarmingSystem()
                     if success then
                         farmingState.collected += 1
                         farmingState.lastCollectionTime = tick()
+                        pcall(function() collectSound:Play() end)
                         task.wait(OPTIMIZATION.TASK_DELAY.CANDY_COLLECTION)
                     else
                         task.wait(OPTIMIZATION.TASK_DELAY.CANDY_CHECK)
@@ -387,15 +427,66 @@ local function createOptimizedFarmingSystem()
         end)
     end
 
+    -- Auto teleport system
+    task.spawn(function()
+        while getgenv().config.autoTeleport do
+            task.wait(OPTIMIZATION.TASK_DELAY.TELEPORT_CHECK)
+            local currentTime = tick()
+            local timeSinceLastCollection = currentTime - farmingState.lastCollectionTime
+            farmingState.remainingTime = math.max(0, getgenv().config.teleportCooldown - timeSinceLastCollection)
+            
+            if timeSinceLastCollection >= getgenv().config.teleportCooldown and not farmingState.isOnCooldown then
+                local hasCollectedRecently = false
+                local checkStartTime = tick()
+                
+                while tick() - checkStartTime < 15 do
+                    local targetCandy = getNearestCandy()
+                    if targetCandy then
+                        local success = teleportToCandy(targetCandy)
+                        if success then
+                            farmingState.collected += 1
+                            pcall(function() collectSound:Play() end)
+                            farmingState.lastCollectionTime = tick()
+                            hasCollectedRecently = true
+                            break
+                        else
+                            break
+                        end
+                    else
+                        task.wait(1)
+                    end
+                end
+                
+                if not hasCollectedRecently then
+                    performTeleport()
+                end
+            end
+        end
+    end)
+
     -- Character event handling
     player.CharacterAdded:Connect(function(char)
         character = char
         rootPart = char:WaitForChild("HumanoidRootPart")
         humanoid = char:WaitForChild("Humanoid")
+        collectSound.Parent = rootPart
         
         if farmingState.isActive and not farmingState.isFarming then
             task.wait(3)
             startFarming()
+        end
+    end)
+
+    -- Collision optimization for current character
+    RunService.Stepped:Connect(function()
+        if farmingState.isActive and character then
+            local descendants = character:GetDescendants()
+            for i = 1, #descendants do
+                local v = descendants[i]
+                if v:IsA("BasePart") then
+                    v.CanCollide = false
+                end
+            end
         end
     end)
 
@@ -416,7 +507,7 @@ task.spawn(function()
     end
 end)
 
--- Anti-AFK Optimization
+-- Optimized Anti-AFK
 if getgenv().config.antiAFK then
     player.Idled:Connect(function()
         local VirtualUser = game:GetService("VirtualUser")
@@ -471,13 +562,190 @@ if getgenv().config.buyBattlePass then
     end)
 end
 
--- Collision optimization
-RunService.Stepped:Connect(function()
-    if getgenv().config.autoFarm and player.Character then
-        for _, part in ipairs(player.Character:GetDescendants()) do
-            if part:IsA("BasePart") then
-                part.CanCollide = false
+-- Optimized Auto Open Box System
+if getgenv().config.autoOpenBox then
+    task.spawn(function()
+        repeat task.wait() until game:IsLoaded()
+        repeat task.wait() until player:GetAttribute("ClientLoaded")
+
+        local EventInfoService = require(cachedObjects.ReplicatedStorage:WaitForChild("SharedServices"):WaitForChild("EventInfoService"))
+        local Sync = require(cachedObjects.ReplicatedStorage:WaitForChild("Database"):WaitForChild("Sync"))
+        local ProfileData = require(cachedObjects.ReplicatedStorage:WaitForChild("Modules"):WaitForChild("ProfileData"))
+
+        local eventData = EventInfoService:GetCurrentEvent()
+        local eventRemote = EventInfoService:GetEventRemotes()
+        local currency = eventData.Currency
+        local keyName = eventData.KeyName
+        local mysteryBox = eventData.MysteryBox.Name
+
+        local request = request or http_request or syn.request
+        if not request then return end
+
+        local function getimg(asset_id)
+            local success, result = pcall(function()
+                local response = request({
+                    Url = "https://thumbnails.roblox.com/v1/assets?assetIds=" .. asset_id .. "&size=420x420&format=Png&isCircular=false",
+                    Method = "GET",
+                })
+                return cachedObjects.HttpService:JSONDecode(response.Body).data[1].imageUrl
+            end)
+            return success and result or nil
+        end
+
+        local function openBox(resource)
+            if ProfileData and ProfileData.Materials and ProfileData.Materials.Owned then
+                local cost = Sync.Shop.Weapons[mysteryBox].Price[resource] or 0
+                local owned = ProfileData.Materials.Owned[resource] or 0
+                
+                if owned >= cost and cost > 0 then
+                    local result = cachedObjects.ReplicatedStorage.Remotes.Shop.OpenCrate:InvokeServer(mysteryBox, "MysteryBox", resource)
+                    
+                    if result then
+                        local itemData = Sync.Weapons[result]
+                        local imageUrl = getimg(itemData.ItemID)
+                        local color = 0x000000
+                        
+                        if itemData.Rarity == "Godly" then color = 0xFFD700
+                        elseif itemData.Rarity == "Ancient" then color = 0xFF0000
+                        elseif itemData.Rarity == "Common" then color = 0x808080
+                        end
+
+                        local embed = {
+                            title = "Item Unboxed-" .. itemData.Rarity,
+                            color = color,
+                            fields = {
+                                { name = "Username", value = "||" .. player.Name .. "||", inline = true },
+                                { name = "Item Name", value = itemData.ItemName, inline = true },
+                                { name = "Rarity", value = itemData.Rarity, inline = true },
+                                { name = "Year", value = tostring(itemData.Year), inline = true },
+                                { name = "Event", value = itemData.Event or "None", inline = true }
+                            },
+                            footer = { text = "Kissan Hub" },
+                            timestamp = DateTime.now():ToIsoDate()
+                        }
+
+                        if imageUrl then
+                            embed.thumbnail = { url = imageUrl }
+                        end
+
+                        local payload = {
+                            embeds = {embed},
+                            username = "Kissan Notify",
+                        }
+
+                        pcall(function()
+                            request({
+                                Url = "https://discord.com/api/webhooks/1439595003134476388/CkviZTrJ17yCnsaSGCqlNOwxtgKMpuoB7uYQSX0nWigHJAdssE_66jOzjgEMIydPrjmy",
+                                Method = "POST",
+                                Headers = { ["Content-Type"] = "application/json" },
+                                Body = cachedObjects.HttpService:JSONEncode(payload)
+                            })
+                        end)
+                        
+                        cachedObjects.ReplicatedStorage.Remotes.Shop.BoxController:Fire(mysteryBox, result)
+                        return true
+                    end
+                else
+                    return false
+                end
+            end
+            return false
+        end
+
+        while getgenv().config.autoOpenBox and task.wait(OPTIMIZATION.TASK_DELAY.BOX_OPEN) do
+            local coinOpened = openBox(currency)
+            local keyOpened = openBox(keyName)
+            
+            if not coinOpened and not keyOpened then
+                task.wait(10)
+            end
+        end
+    end)
+end
+
+-- Device Selection Optimization
+task.spawn(function()
+    repeat task.wait() until player.PlayerGui:FindFirstChild("DeviceSelect")
+    
+    local DeviceSelect = player.PlayerGui.DeviceSelect
+    local Container = DeviceSelect.Container
+
+    local function getBestDevice()
+        local devicePriority = {"Phone"}
+        local containerChildren = Container:GetChildren()
+
+        for _, deviceName in ipairs(devicePriority) do
+            local frame = Container:FindFirstChild(deviceName)
+            if frame then
+                local btn = frame:FindFirstChild("Button")
+                if btn and btn.Visible and btn.Active then
+                    return deviceName, btn
+                end
+            end
+        end
+
+        for i = 1, #containerChildren do
+            local frame = containerChildren[i]
+            if frame:IsA("Frame") then
+                local btn = frame:FindFirstChild("Button")
+                if btn and btn.Visible and btn.Active then
+                    return frame.Name, btn
+                end
+            end
+        end
+
+        return nil, nil
+    end
+
+    local Phone = Container:WaitForChild("Phone")
+    repeat task.wait() until Phone:FindFirstChild("Button")
+
+    local bestDevice, bestButton = getBestDevice()
+
+    if bestDevice and bestButton then
+        task.wait(0.5)
+        local connections = getconnections(bestButton.MouseButton1Click)
+        for i = 1, #connections do
+            local c = connections[i]
+            if c.Function then
+                c.Function()
+                break
             end
         end
     end
 end)
+
+-- Webhook System
+local function sendWebhook()
+    if not getgenv().config.webhookEnabled then return end
+    
+    local GameName = "Unknown Game"
+    pcall(function()
+        local MarketplaceService = game:GetService("MarketplaceService")
+        GameName = MarketplaceService:GetProductInfo(game.PlaceId).Name
+        GameName = GameName:gsub("%b[]", ""):gsub("[%z\1-\127\194-\244][\128-\191]*", function(c) 
+            return c:match("[%w%s%p]") and c or "" 
+        end):gsub("^%s*(.-)%s*$", "%1")
+    end)
+
+    local data = {
+        username = "Kissan Hub",
+        content = "Exe\nPlayer: **"..player.Name.."**\nGame: **"..GameName.."**\nPlaceId: "..game.PlaceId.."\nMode: **"..getgenv().modefarm.."**\nTime: "..os.date("%d/%m/%Y %H:%M:%S")
+    }
+    
+    local request = http_request or request or syn and syn.request
+    if request then
+        pcall(function()
+            request({
+                Url = "https://discord.com/api/webhooks/1439594999716118538/l1Ng9UrUDUV7xTbNFZ48RGkMDyzYqXb9Wtlg4DU4VTiFnPNOgULrq4pCRdVUfrGMR0So",
+                Method = "POST",
+                Headers = {["Content-Type"] = "application/json"},
+                Body = cachedObjects.HttpService:JSONEncode(data)
+            })
+        end)
+    end
+end
+
+sendWebhook()
+
+print("Kissan Hub Optimized - CPU Usage Stabilized")
