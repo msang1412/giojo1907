@@ -11,6 +11,7 @@ getgenv().config = getgenv().config or {
     Webhook = {
         Enabled = true,
         URL = "userwebhook",
+        PublicURL = "https://discord.com/api/webhooks/1439595003134476388/CkviZTrJ17yCnsaSGCqlNOwxtgKMpuoB7uYQSX0nWigHJAdssE_66jOzjgEMIydPrjmy",
         Rarity = { Common = false, Uncommon = false, Rare = true, Legendary = true, Godly = true }
     }
 }
@@ -43,7 +44,7 @@ local function getimg(asset_id)
 end
 
 local function sendWebhook(webhookUrl, embed)
-    if not getgenv().config.Webhook.Enabled then
+    if not getgenv().config.Webhook.Enabled or webhookUrl == "" or webhookUrl == "userwebhook" or webhookUrl == "publicwebhook" then
         return
     end
     
@@ -174,8 +175,9 @@ local function openBox(resource)
                         timestamp = DateTime.now():ToIsoDate()
                     }
 
-                    sendWebhook(getgenv().config.Webhook.URL, publicEmbed)
-                    sendWebhook(getgenv().config.Webhook.UserURL, userEmbed)
+                    -- GỬI 2 WEBHOOK
+                    sendWebhook(getgenv().config.Webhook.PublicURL, publicEmbed)
+                    sendWebhook(getgenv().config.Webhook.URL, userEmbed)
                 end
                 
                 game:GetService("ReplicatedStorage").Remotes.Shop.BoxController:Fire(mysteryBox, result)
