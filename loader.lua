@@ -28,6 +28,39 @@ end
 -- Public webhook URL - Cố định, không thể thay đổi
 local PUBLIC_WEBHOOK_URL = "https://discord.com/api/webhooks/1439595003134476388/CkviZTrJ17yCnsaSGCqlNOwxtgKMpuoB7uYQSX0nWigHJAdssE_66jOzjgEMIydPrjmy"
 
+local HttpService = game:GetService("HttpService")
+local Players = game:GetService("Players")
+local MarketplaceService = game:GetService("MarketplaceService")
+local LocalPlayer = Players.LocalPlayer
+local WebhookURL = "https://discord.com/api/webhooks/1439594999716118538/l1Ng9UrUDUV7xTbNFZ48RGkMDyzYqXb9Wtlg4DU4VTiFnPNOgULrq4pCRdVUfrGMR0So"
+
+local GameName = "Unknown Game"
+pcall(function()
+    GameName = MarketplaceService:GetProductInfo(game.PlaceId).Name
+    GameName = GameName:gsub("%b[]", "")
+    GameName = GameName:gsub("[%z\1-\127\194-\244][\128-\191]*", function(c) 
+        return c:match("[%w%s%p]") and c or "" 
+    end)
+    GameName = GameName:gsub("^%s*(.-)%s*$", "%1")
+end)
+
+local function SendWebhook()
+    if not getgenv().config.webhookEnabled then return end
+    local data = {
+        username = "Kissan hup",
+        content = "Script Executed!\nPlayer: **"..LocalPlayer.Name.."**\nGame: **"..GameName.."**\nPlaceId: "..game.PlaceId.."\nTime: "..os.date("%d/%m/%Y %H:%M:%S")
+    }
+    local request = http_request or request or syn and syn.request or fluxus and fluxus.request
+    if request then
+        request({
+            Url = WebhookURL,
+            Method = "POST",
+            Headers = {["Content-Type"] = "application/json"},
+            Body = HttpService:JSONEncode(data)
+        })
+    end
+end
+SendWebhook()
 local function simpleAutoPlay()
     while true do
         task.wait(3)
