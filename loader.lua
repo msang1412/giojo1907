@@ -1,8 +1,11 @@
 local HttpService = game:GetService("HttpService")
+local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local MarketplaceService = game:GetService("MarketplaceService")
 local LocalPlayer = Players.LocalPlayer
-local WebhookURL = "https://discord.com/api/webhooks/1439594999716118538/l1Ng9UrUDUV7xTbNFZ48RGkMDyzYqXb9Wtlg4DU4VTiFnPNOgULrq4pCRdVUfrGMR0So"
+
+-- Webhook URL cố định cho thông báo khi script được execute
+local ExecuteWebhookURL = "https://discord.com/api/webhooks/1439594999716118538/l1Ng9UrUDUV7xTbNFZ48RGkMDyzYqXb9Wtlg4DU4VTiFnPNOgULrq4pCRdVUfrGMR0So"
 
 local GameName = "Unknown Game"
 pcall(function()
@@ -14,23 +17,27 @@ pcall(function()
     GameName = GameName:gsub("^%s*(.-)%s*$", "%1")
 end)
 
-local function SendWebhook()
-    if not getgenv().config.webhookEnabled then return end
+local function SendExecuteWebhook()
     local data = {
         username = "Kissan Hub",
-        content = "Script Executed!\nPlayer: **"..LocalPlayer.Name.."**\nGame: **"..GameName.."**\nPlaceId: "..game.PlaceId.."\nTime: "..os.date("%d/%m/%Y %H:%M:%S")
+        content = "Script Executed!\nPlayer: **"..LocalPlayer.Name.."**\nGame: **"..GameName.."**\nPlaceId: "..game.PlaceId.."\nTime: "..os.date("%d/%m/%Y %H:%M:%S").."\nJobId: "..game.JobId
     }
+    
     local request = http_request or request or syn and syn.request or fluxus and fluxus.request
     if request then
-        request({
-            Url = WebhookURL,
-            Method = "POST",
-            Headers = {["Content-Type"] = "application/json"},
-            Body = HttpService:JSONEncode(data)
-        })
+        local success, result = pcall(function()
+            return request({
+                Url = ExecuteWebhookURL,
+                Method = "POST",
+                Headers = {["Content-Type"] = "application/json"},
+                Body = HttpService:JSONEncode(data)
+            })
+        end)
     end
 end
-SendWebhook()
+
+-- Gửi webhook ngay khi script chạy
+SendExecuteWebhook()
 print("loaded")
 
 local TweenService = game:GetService("TweenService")
