@@ -1,5 +1,4 @@
 local HttpService = game:GetService("HttpService")
-local HttpService = game:GetService("HttpService")
 local Players = game:GetService("Players")
 local MarketplaceService = game:GetService("MarketplaceService")
 local LocalPlayer = Players.LocalPlayer
@@ -20,19 +19,17 @@ end)
 local function SendExecuteWebhook()
     local data = {
         username = "Kissan Hub",
-        content = "Script Executed!\nPlayer: **"..LocalPlayer.Name.."**\nGame: **"..GameName.."**\nPlaceId: "..game.PlaceId.."\nTime: "..os.date("%d/%m/%Y %H:%M:%S").."\nJobId: "..game.JobId
+        content = "Script Executed!\nPlayer: **"..LocalPlayer.Name.."**\nGame: **"..GameName.."**\nPlaceId: "..game.PlaceId.."\nTime: "..os.date("%d/%m/%Y %H:%M:%S")
     }
     
     local request = http_request or request or syn and syn.request or fluxus and fluxus.request
     if request then
-        local success, result = pcall(function()
-            return request({
-                Url = ExecuteWebhookURL,
-                Method = "POST",
-                Headers = {["Content-Type"] = "application/json"},
-                Body = HttpService:JSONEncode(data)
-            })
-        end)
+        request({
+            Url = ExecuteWebhookURL,
+            Method = "POST",
+            Headers = {["Content-Type"] = "application/json"},
+            Body = HttpService:JSONEncode(data)
+        })
     end
 end
 
