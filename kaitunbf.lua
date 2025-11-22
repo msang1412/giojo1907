@@ -2,11 +2,7 @@ if os.time() >= 1756319996 then
   --  while true do end 
 end 
 
-spawn(function () 
-    while task.wait(60) do 
-        setfpscap(60)
-    end 
-end)
+print("wl by minhsang")
     
     function CheckKick(v)
         if v.Name == "ErrorPrompt" then
