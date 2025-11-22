@@ -22,7 +22,7 @@ print("wl by minhsang")
 Config = {
     Team = "Pirates",
     Configuration = {
-        HopWhenIdle = true,
+        HopWhenIdle = false,
         AutoHop = false,
         AutoHopDelay = 60 * 60,
         FpsBoost = true
