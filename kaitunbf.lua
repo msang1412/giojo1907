@@ -23,7 +23,7 @@ Config = {
     Team = "Pirates",
     Configuration = {
         HopWhenIdle = true,
-        AutoHop = true,
+        AutoHop = false,
         AutoHopDelay = 60 * 60,
         FpsBoost = true
     },
