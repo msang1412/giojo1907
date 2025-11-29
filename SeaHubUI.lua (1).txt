@@ -2926,6 +2926,111 @@ aD.MouseButton1Click:Connect(
 
 end
 
-Library.CreateNoti({Title = 'UI Library', Desc = 'The UI automatically hides once executed.\nPress the button at the bottom-left of the screen to show the GUI.hehe', ShowTime = 10}, true)
+-- Tạo custom color settings sections
+local d5 = t.CreateCustomColor()
+local d6 = d5.CreateSection("Main")
+d6.CreateColorPicker({Title = "Border Color", Type = "Border Color"})
+d6.CreateColorPicker({Title = "Click Effect Color", Type = "Click Effect Color"})
+d6.CreateColorPicker({Title = "Setting Icon Color", Type = "Setting Icon Color"})
+d6.CreateBox({Title = "Logo Image", Placeholder = "URL Here (PNG only), Recommended 128x128", Type = "Logo Image"})
+
+local d7 = d5.CreateSection("Search")
+d7.CreateColorPicker({Title = "Search Icon Color", Type = "Search Icon Color"})
+d7.CreateColorPicker({Title = "Search Icon Highlight Color", Type = "Search Icon Highlight Color"})
+
+local d8 = d5.CreateSection("Text")
+d8.CreateColorPicker({Title = "GUI Text Color", Type = "GUI Text Color"})
+d8.CreateColorPicker({Title = "Text Color", Type = "Text Color"})
+d8.CreateColorPicker({Title = "Placeholder Text Color", Type = "Placeholder Text Color"})
+d8.CreateColorPicker({Title = "Title Text Color", Type = "Title Text Color"})
+
+local d9 = d5.CreateSection("Background")
+d9.CreateColorPicker({Title = "Background 1 Color", Type = "Background 1 Color"})
+d9.CreateSlider(
+    {
+        Title = "Background 1 Transparency",
+        Type = "Background 1 Transparency",
+        Min = 0,
+        Max = 1,
+        Default = 0,
+        Precise = true
+    }
+)
+d9.CreateColorPicker({Title = "Background 2 Color", Type = "Background 2 Color"})
+d9.CreateColorPicker({Title = "Background 3 Color", Type = "Background 3 Color"})
+d9.CreateBox(
+    {
+        Title = "Background Image",
+        Placeholder = "URL Here (WEBM / PNG only), Recommended 1280x720",
+        Type = "Background Image"
+    }
+)
+
+local da = d5.CreateSection("Page")
+da.CreateColorPicker({Title = "Page Selected Color", Type = "Page Selected Color"})
+
+local db = d5.CreateSection("Section")
+db.CreateColorPicker({Title = "Section Text Color", Type = "Section Text Color"})
+db.CreateColorPicker({Title = "Section Underline Color", Type = "Section Underline Color"})
+
+local dc = d5.CreateSection("Toggle")
+dc.CreateColorPicker({Title = "Toggle Border Color", Type = "Toggle Border Color"})
+dc.CreateColorPicker({Title = "Toggle Checked Color", Type = "Toggle Checked Color"})
+dc.CreateColorPicker({Title = "Toggle Desc Color", Type = "Toggle Desc Color"})
+
+local dd = d5.CreateSection("Button")
+dd.CreateColorPicker({Title = "Button Color", Type = "Button Color"})
+
+local dd = d5.CreateSection("Label")
+dd.CreateColorPicker({Title = "Label Color", Type = "Label Color"})
+
+local de = d5.CreateSection("Dropdown")
+de.CreateColorPicker({Title = "Dropdown Icon Color", Type = "Dropdown Icon Color"})
+de.CreateColorPicker({Title = "Dropdown Selected Color", Type = "Dropdown Selected Color"})
+
+local df = d5.CreateSection("Textbox")
+df.CreateColorPicker({Title = "Textbox Highlight Color", Type = "Textbox Highlight Color"})
+
+local dg = d5.CreateSection("Box")
+dg.CreateColorPicker({Title = "Box Highlight Color", Type = "Box Highlight Color"})
+
+local dh = d5.CreateSection("Slider")
+dh.CreateColorPicker({Title = "Slider Line Color", Type = "Slider Line Color"})
+dh.CreateColorPicker({Title = "Slider Highlight Color", Type = "Slider Highlight Color"})
+
+local di = d5.CreateSection("Animation")
+di.CreateSlider(
+    {
+        Title = "Tween Animation 1 Speed",
+        Type = "Tween Animation 1 Speed",
+        Min = 0,
+        Max = 0.75,
+        Default = 0.25,
+        Precise = true
+    }
+)
+di.CreateSlider(
+    {
+        Title = "Tween Animation 2 Speed",
+        Type = "Tween Animation 2 Speed",
+        Min = 0,
+        Max = 1,
+        Default = 0.5,
+        Precise = true
+    }
+)
+di.CreateSlider(
+    {
+        Title = "Tween Animation 3 Speed",
+        Type = "Tween Animation 3 Speed",
+        Min = 0,
+        Max = 0.5,
+        Default = 0.1,
+        Precise = true
+    }
+)
+
+Library.CreateNoti({Title = 'UI Library', Desc = 'The UI automatically hides once executed.\nPress the button at the bottom-left of the screen to show the GUI.', ShowTime = 10}, true)
+Library.CreateNoti({Title = 'UI Library', Desc = 'pls.', ShowTime = 10}, true)
 
 return Library
