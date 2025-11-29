@@ -559,6 +559,73 @@ function Library.CreateMain(Setting)
 	TextLabelMain.TextXAlignment = Enum.TextXAlignment.Left
 	TextLabelMain.TextColor3 = getgenv().UIColor["GUI Text Color"]
 
+-- ... (phần code hiện có của TopMain)
+
+TextLabelMain.Name = "TextLabelMain"
+TextLabelMain.Parent = TopMain
+TextLabelMain.BackgroundColor3 = Color3.fromRGB(230, 230, 230)
+TextLabelMain.BackgroundTransparency = 1.000
+TextLabelMain.Position = UDim2.new(0, getgenv().T1 and 40 or 35, 0, 0)
+TextLabelMain.Size = UDim2.new(1, getgenv().T1 and -65 or -60, 1, 0) -- Giảm width để nhường chỗ
+TextLabelMain.Font = Enum.Font.GothamBold
+TextLabelMain.RichText = true
+TextLabelMain.TextSize = 16.000
+TextLabelMain.TextWrapped = true
+TextLabelMain.TextXAlignment = Enum.TextXAlignment.Left
+TextLabelMain.TextColor3 = getgenv().UIColor["GUI Text Color"]
+
+-- === THÊM BÁNH RĂNG ĐƠN GIẢN ===
+local SettingsFrame = Instance.new("Frame")
+SettingsFrame.Name = "SettingsFrame"
+SettingsFrame.Parent = TopMain
+SettingsFrame.AnchorPoint = Vector2.new(1, 0.5)
+SettingsFrame.BackgroundTransparency = 1
+SettingsFrame.Position = UDim2.new(1, -5, 0.5, 0)
+SettingsFrame.Size = UDim2.new(0, 25, 0, 25)
+
+local SettingsButton = Instance.new("TextButton")
+SettingsButton.Name = "SettingsButton"
+SettingsButton.Parent = SettingsFrame
+SettingsButton.BackgroundTransparency = 1
+SettingsButton.Size = UDim2.new(1, 0, 1, 0)
+SettingsButton.Text = ""
+
+local SettingsIcon = Instance.new("ImageLabel")
+SettingsIcon.Name = "SettingsIcon"
+SettingsIcon.Parent = SettingsFrame
+SettingsIcon.AnchorPoint = Vector2.new(0.5, 0.5)
+SettingsIcon.BackgroundTransparency = 1
+SettingsIcon.Position = UDim2.new(0.5, 0, 0.5, 0)
+SettingsIcon.Size = UDim2.new(1, -5, 1, -5)
+SettingsIcon.Image = "rbxassetid://3926307971"
+SettingsIcon.ImageRectOffset = Vector2.new(324, 364)
+SettingsIcon.ImageRectSize = Vector2.new(36, 36)
+SettingsIcon.ImageColor3 = getgenv().UIColor["Setting Icon Color"]
+
+-- Hiệu ứng hover
+SettingsButton.MouseEnter:Connect(function()
+    TweenService:Create(SettingsIcon, TweenInfo.new(0.2), {
+        ImageColor3 = getgenv().UIColor["Search Icon Highlight Color"]
+    }):Play()
+end)
+
+SettingsButton.MouseLeave:Connect(function()
+    TweenService:Create(SettingsIcon, TweenInfo.new(0.2), {
+        ImageColor3 = getgenv().UIColor["Setting Icon Color"]
+    }):Play()
+end)
+
+-- Sự kiện click đơn giản
+SettingsButton.MouseButton1Click:Connect(function()
+    Library.CreateNoti({
+        Title = "Settings",
+        Desc = "Settings feature is coming soon!",
+        ShowTime = 3
+    })
+end)
+
+-- ... (phần code tiếp theo)
+
 	local colorR = tostring(Library_Function.Getcolor(getgenv().UIColor['Title Text Color'])[1])
 	local colorG = tostring(Library_Function.Getcolor(getgenv().UIColor['Title Text Color'])[2])
 	local colorB = tostring(Library_Function.Getcolor(getgenv().UIColor['Title Text Color'])[3])
