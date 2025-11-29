@@ -574,35 +574,58 @@ TextLabelMain.TextWrapped = true
 TextLabelMain.TextXAlignment = Enum.TextXAlignment.Left
 TextLabelMain.TextColor3 = getgenv().UIColor["GUI Text Color"]
 
--- === THÊM BÁNH RĂNG ĐƠN GIẢN ===
+-- === THÊM BÁNH RĂNG ĐƠN GIẢN (DÙNG EMOJI) ===
 local SettingsFrame = Instance.new("Frame")
 SettingsFrame.Name = "SettingsFrame"
 SettingsFrame.Parent = TopMain
 SettingsFrame.AnchorPoint = Vector2.new(1, 0.5)
 SettingsFrame.BackgroundTransparency = 1
-SettingsFrame.Position = UDim2.new(1, -5, 0.5, 0)  -- Sửa thành -5
+SettingsFrame.Position = UDim2.new(1, -5, 0.5, 0)
 SettingsFrame.Size = UDim2.new(0, 25, 0, 25)
 
 local SettingsButton = Instance.new("TextButton")
 SettingsButton.Name = "SettingsButton"
 SettingsButton.Parent = SettingsFrame
-SettingsFrame.BackgroundTransparency = 1
+SettingsButton.BackgroundTransparency = 1
 SettingsButton.Size = UDim2.new(1, 0, 1, 0)
 SettingsButton.Text = ""
+SettingsButton.ZIndex = 10
 
-local SettingsIcon = Instance.new("ImageLabel")
-SettingsIcon.Name = "SettingsIcon"
-SettingsIcon.Parent = SettingsFrame
-SettingsIcon.AnchorPoint = Vector2.new(0.5, 0.5)
-SettingsIcon.BackgroundTransparency = 1
-SettingsIcon.Position = UDim2.new(0.5, 0, 0.5, 0)
-SettingsIcon.Size = UDim2.new(1, -5, 1, -5)
-SettingsIcon.Image = "rbxassetid://134369701407905"
-SettingsIcon.ImageRectOffset = Vector2.new(324, 364)
-SettingsIcon.ImageRectSize = Vector2.new(36, 36)
-SettingsIcon.ImageColor3 = getgenv().UIColor["Setting Icon Color"]
+-- DÙNG TEXT LABEL VỚI EMOJI THAY VÌ IMAGE
+local SettingsLabel = Instance.new("TextLabel")
+SettingsLabel.Name = "SettingsLabel"
+SettingsLabel.Parent = SettingsFrame
+SettingsLabel.AnchorPoint = Vector2.new(0.5, 0.5)
+SettingsLabel.BackgroundTransparency = 1
+SettingsLabel.Position = UDim2.new(0.5, 0, 0.5, 0)
+SettingsLabel.Size = UDim2.new(1, 0, 1, 0)
+SettingsLabel.Text = "⚙"  -- Emoji bánh răng
+SettingsLabel.TextColor3 = getgenv().UIColor["Setting Icon Color"]
+SettingsLabel.TextSize = 16
+SettingsLabel.Font = Enum.Font.GothamBold
+SettingsLabel.ZIndex = 11
 
--- ... (phần code tiếp theo)
+-- Hiệu ứng hover
+SettingsButton.MouseEnter:Connect(function()
+    TweenService:Create(SettingsLabel, TweenInfo.new(0.2), {
+        TextColor3 = getgenv().UIColor["Search Icon Highlight Color"]
+    }):Play()
+end)
+
+SettingsButton.MouseLeave:Connect(function()
+    TweenService:Create(SettingsLabel, TweenInfo.new(0.2), {
+        TextColor3 = getgenv().UIColor["Setting Icon Color"]
+    }):Play()
+end)
+
+-- Sự kiện click
+SettingsButton.MouseButton1Click:Connect(function()
+    Library.CreateNoti({
+        Title = "Settings",
+        Desc = "Settings feature is coming soon!",
+        ShowTime = 3
+    })
+end)
 
 	local colorR = tostring(Library_Function.Getcolor(getgenv().UIColor['Title Text Color'])[1])
 	local colorG = tostring(Library_Function.Getcolor(getgenv().UIColor['Title Text Color'])[2])
