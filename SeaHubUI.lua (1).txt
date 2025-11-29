@@ -559,6 +559,228 @@ function Library.CreateMain(Setting)
 	TextLabelMain.TextXAlignment = Enum.TextXAlignment.Left
 	TextLabelMain.TextColor3 = getgenv().UIColor["GUI Text Color"]
 
+-- Phần bánh răng setting ở góc phải UI
+ak.Name = "SettionMain"
+ak.Parent = ac
+ak.AnchorPoint = Vector2.new(1, 0)
+ak.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ak.BackgroundTransparency = 1.000
+ak.Position = UDim2.new(1, 0, 0, 0)
+ak.Size = UDim2.new(0, 30, 0, 30)
+
+al.Name = "SettionButton"
+al.Parent = ak
+al.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+al.BackgroundTransparency = 1.000
+al.BorderColor3 = Color3.fromRGB(27, 42, 53)
+al.Size = UDim2.new(1, 0, 1, 0)
+al.Font = Enum.Font.SourceSans
+al.Text = ""
+al.TextColor3 = Color3.fromRGB(0, 0, 0)
+al.TextSize = 14.000
+al.Visible = true
+
+am.Name = "SettingIcon"
+am.Parent = ak
+am.AnchorPoint = Vector2.new(0.5, 0.5)
+am.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+am.BackgroundTransparency = 1.000
+am.Position = UDim2.new(0.5, 0, 0.5, 0)
+am.Size = UDim2.new(1, -10, 1, -10)
+am.Image = "rbxassetid://7397332215"
+am.Visible = true
+am.ImageColor3 = getgenv().UIColor["Setting Icon Color"]
+table.insert(
+    c["Setting Icon Color"],
+    function()
+        am.ImageColor3 = getgenv().UIColor["Setting Icon Color"]
+    end
+)
+
+-- Sự kiện click cho nút setting
+local av = false
+al.MouseButton1Click:Connect(
+    function()
+        u.ButtonEffect()
+    end
+)
+al.MouseButton1Click:Connect(
+    function()
+        av = not av
+        pa = av and 1 or 0
+        ro = av and 180 or 0
+        game.TweenService:Create(am, TweenInfo.new(getgenv().UIColor["Tween Animation 1 Speed"]), {Rotation = ro}):Play()
+    end
+)
+
+-- Phần custom GUI settings sẽ hiển thị khi click vào bánh răng
+local aw = Instance.new("ScrollingFrame")
+local ax = Instance.new("UIListLayout")
+aw.Name = "CustomList"
+aw.Parent = ap
+aw.Active = true
+aw.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+aw.BackgroundTransparency = 1.000
+aw.BorderColor3 = Color3.fromRGB(27, 42, 53)
+aw.BorderSizePixel = 0
+aw.Position = UDim2.new(0, 5, 0, 30)
+aw.Size = UDim2.new(1, -10, 1, -30)
+aw.BottomImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+aw.ScrollBarThickness = 5
+aw.TopImage = "rbxasset://textures/ui/Scroll/scroll-middle.png"
+
+ax.Name = "CustomListLayout"
+ax.Parent = aw
+ax.SortOrder = Enum.SortOrder.LayoutOrder
+ax.Padding = UDim.new(0, 5)
+ax:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(
+    function()
+        aw.CanvasSize = UDim2.new(0, 0, 0, ax.AbsoluteContentSize.Y + 5)
+    end
+)
+
+-- Title cho custom settings
+local ay = Instance.new("TextLabel")
+ay.Name = "GUITextColor"
+ay.Parent = ap
+ay.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+ay.BackgroundTransparency = 1.000
+ay.Position = UDim2.new(0, 15, 0, 0)
+ay.Size = UDim2.new(1, -15, 0, 25)
+ay.Font = Enum.Font.GothamBold
+ay.Text = ""
+ay.TextSize = 16.000
+ay.TextXAlignment = Enum.TextXAlignment.Left
+ay.TextColor3 = getgenv().UIColor["GUI Text Color"]
+table.insert(
+    c["GUI Text Color"],
+    function()
+        ay.TextColor3 = getgenv().UIColor["GUI Text Color"]
+    end
+)
+
+-- Search box trong custom settings
+local az = Instance.new("Frame")
+local aA = Instance.new("UICorner")
+local aB = Instance.new("Frame")
+local aC = Instance.new("ImageLabel")
+local aD = Instance.new("TextButton")
+local aE = Instance.new("TextBox")
+
+az.Name = "Background2"
+az.Parent = ap
+az.AnchorPoint = Vector2.new(1, 0)
+az.BackgroundColor3 = getgenv().UIColor["Background 2 Color"]
+az.ClipsDescendants = true
+az.Position = UDim2.new(1, -5, 0, 5)
+az.Size = UDim2.new(0, 20, 0, 20)
+az.ClipsDescendants = true
+table.insert(
+    c["Background 2 Color"],
+    function()
+        az.BackgroundColor3 = getgenv().UIColor["Background 2 Color"]
+    end
+)
+
+aA.CornerRadius = UDim.new(0, 2)
+aA.Name = "PageSearchCorner"
+aA.Parent = az
+
+aB.Name = "SearchFrame"
+aB.Parent = az
+aB.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+aB.BackgroundTransparency = 1.000
+aB.Size = UDim2.new(0, 20, 0, 20)
+
+aC.Name = "SearchIcon"
+aC.Parent = aB
+aC.AnchorPoint = Vector2.new(0.5, 0.5)
+aC.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+aC.BackgroundTransparency = 1.000
+aC.Position = UDim2.new(0.5, 0, 0.5, 0)
+aC.Size = UDim2.new(0, 16, 0, 16)
+aC.Image = "rbxassetid://8154282545"
+aC.ImageColor3 = getgenv().UIColor["Search Icon Color"]
+table.insert(
+    c["Search Icon Color"],
+    function()
+        aC.ImageColor3 = getgenv().UIColor["Search Icon Color"]
+    end
+)
+
+aD.Name = "active"
+aD.Parent = aB
+aD.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+aD.BackgroundTransparency = 1.000
+aD.Size = UDim2.new(1, 0, 1, 0)
+aD.Font = Enum.Font.SourceSans
+aD.Text = ""
+aD.TextColor3 = Color3.fromRGB(0, 0, 0)
+aD.TextSize = 14.000
+
+aE.Name = "TextColorPlaceholder"
+aE.Parent = az
+aE.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+aE.BackgroundTransparency = 1.000
+aE.Position = UDim2.new(0, 30, 0, 0)
+aE.Size = UDim2.new(1, -30, 1, 0)
+aE.Font = Enum.Font.GothamBold
+aE.Text = ""
+aE.TextSize = 14.000
+aE.TextXAlignment = Enum.TextXAlignment.Left
+aE.PlaceholderText = "Search Section name"
+aE.PlaceholderColor3 = getgenv().UIColor["Placeholder Text Color"]
+aE.TextColor3 = getgenv().UIColor["Text Color"]
+table.insert(
+    c["Placeholder Text Color"],
+    function()
+        aE.PlaceholderColor3 = getgenv().UIColor["Placeholder Text Color"]
+    end
+)
+table.insert(
+    c["Text Color"],
+    function()
+        aE.TextColor3 = getgenv().UIColor["Text Color"]
+    end
+)
+
+-- Sự kiện cho search box
+local aF = false
+aD.MouseEnter:Connect(
+    function()
+        w:Create(
+            aC,
+            TweenInfo.new(getgenv().UIColor["Tween Animation 3 Speed"]),
+            {ImageColor3 = getgenv().UIColor["Search Icon Highlight Color"]}
+        ):Play()
+    end
+)
+aD.MouseLeave:Connect(
+    function()
+        w:Create(
+            aC,
+            TweenInfo.new(getgenv().UIColor["Tween Animation 3 Speed"]),
+            {ImageColor3 = getgenv().UIColor["Search Icon Color"]}
+        ):Play()
+    end
+)
+aD.MouseButton1Click:Connect(
+    function()
+        u.ButtonEffect()
+    end
+)
+aE.Focused:Connect(
+    function()
+        u.ButtonEffect()
+    end
+)
+aD.MouseButton1Click:Connect(
+    function()
+        aF = not aF
+        local aG = aF and UDim2.new(0, 175, 0, 20) or UDim2.new(0, 20, 0, 20)
+        game.TweenService:Create(az, TweenInfo.new(getgenv().UIColor["Tween Animation 2 Speed"]), {Size = aG}):Play()
+    end
+)
 	local colorR = tostring(Library_Function.Getcolor(getgenv().UIColor['Title Text Color'])[1])
 	local colorG = tostring(Library_Function.Getcolor(getgenv().UIColor['Title Text Color'])[2])
 	local colorB = tostring(Library_Function.Getcolor(getgenv().UIColor['Title Text Color'])[3])
