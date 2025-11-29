@@ -580,13 +580,13 @@ SettingsFrame.Name = "SettingsFrame"
 SettingsFrame.Parent = TopMain
 SettingsFrame.AnchorPoint = Vector2.new(1, 0.5)
 SettingsFrame.BackgroundTransparency = 1
-SettingsFrame.Position = UDim2.new(1, -5, 0.5, 0)
+SettingsFrame.Position = UDim2.new(1, -5, 0.5, 0)  -- Sửa thành -5
 SettingsFrame.Size = UDim2.new(0, 25, 0, 25)
 
 local SettingsButton = Instance.new("TextButton")
 SettingsButton.Name = "SettingsButton"
 SettingsButton.Parent = SettingsFrame
-SettingsButton.BackgroundTransparency = 1
+SettingsFrame.BackgroundTransparency = 1
 SettingsButton.Size = UDim2.new(1, 0, 1, 0)
 SettingsButton.Text = ""
 
@@ -597,32 +597,10 @@ SettingsIcon.AnchorPoint = Vector2.new(0.5, 0.5)
 SettingsIcon.BackgroundTransparency = 1
 SettingsIcon.Position = UDim2.new(0.5, 0, 0.5, 0)
 SettingsIcon.Size = UDim2.new(1, -5, 1, -5)
-SettingsIcon.Image = "rbxassetid://7397332215"
+SettingsIcon.Image = "rbxassetid://3926307971"
 SettingsIcon.ImageRectOffset = Vector2.new(324, 364)
 SettingsIcon.ImageRectSize = Vector2.new(36, 36)
 SettingsIcon.ImageColor3 = getgenv().UIColor["Setting Icon Color"]
-
--- Hiệu ứng hover
-SettingsButton.MouseEnter:Connect(function()
-    TweenService:Create(SettingsIcon, TweenInfo.new(0.2), {
-        ImageColor3 = getgenv().UIColor["Search Icon Highlight Color"]
-    }):Play()
-end)
-
-SettingsButton.MouseLeave:Connect(function()
-    TweenService:Create(SettingsIcon, TweenInfo.new(0.2), {
-        ImageColor3 = getgenv().UIColor["Setting Icon Color"]
-    }):Play()
-end)
-
--- Sự kiện click đơn giản
-SettingsButton.MouseButton1Click:Connect(function()
-    Library.CreateNoti({
-        Title = "Settings",
-        Desc = "Settings feature is coming soon!",
-        ShowTime = 3
-    })
-end)
 
 -- ... (phần code tiếp theo)
 
