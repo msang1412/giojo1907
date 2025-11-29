@@ -781,6 +781,7 @@ aD.MouseButton1Click:Connect(
         game.TweenService:Create(az, TweenInfo.new(getgenv().UIColor["Tween Animation 2 Speed"]), {Size = aG}):Play()
     end
 )
+
 	local colorR = tostring(Library_Function.Getcolor(getgenv().UIColor['Title Text Color'])[1])
 	local colorG = tostring(Library_Function.Getcolor(getgenv().UIColor['Title Text Color'])[2])
 	local colorB = tostring(Library_Function.Getcolor(getgenv().UIColor['Title Text Color'])[3])
@@ -2925,6 +2926,6 @@ aD.MouseButton1Click:Connect(
 
 end
 
-Library.CreateNoti({Title = 'UI Library', Desc = 'The UI automatically hides once executed.\nPress the button at the bottom-left of the screen to show the GUI.', ShowTime = 10}, true)
+Library.CreateNoti({Title = 'UI Library', Desc = 'The UI automatically hides once executed.\nPress the button at the bottom-left of the screen to show the GUI.hehe', ShowTime = 10}, true)
 
 return Library
